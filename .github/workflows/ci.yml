@@ -1,0 +1,46 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Check formatting (gofmt)
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Unformatted files found:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Run static analysis (go vet)
+        run: go vet ./...
+
+      - name: Run unit tests with race detector & coverage
+        run: go test -race -v -coverprofile=coverage.out ./...
+
+      - name: Build server binary
+        run: go build -v -o bin/server ./cmd/server
