@@ -1,0 +1,25 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go cache / environment
+.gocache/
+
+# Environment files (contains secrets)
+.env
+.env.local
+
+# OS / IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
